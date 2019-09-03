@@ -10,6 +10,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(cors());
 
+app.use('/test', (req, res) => res.send(req.body));
 app.use('/movies', require('./routes/movies'));
 
 // catch 404 and forward to error handler
