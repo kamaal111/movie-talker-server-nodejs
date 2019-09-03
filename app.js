@@ -1,18 +1,17 @@
-const createError = require('http-errors');
 const express = require('express');
 const logger = require('morgan');
+
+require('dotenv').config();
 
 const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
 
-app.use('/', (req, res) => {
-    res.send({ data: req.body });
-});
+app.use('/movies', require('./routes/movies'));
 
 // catch 404 and forward to error handler
-app.use((_req, _res, next) => next(createError(404)));
+app.use((_req, _res, next) => next(res.sendStatus(404)));
 
 // error handler
 app.use((err, req, res) => {
