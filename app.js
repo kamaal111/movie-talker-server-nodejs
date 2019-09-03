@@ -1,17 +1,19 @@
 const express = require('express');
 const logger = require('morgan');
+const cors = require('cors');
 
-require('dotenv').config();
+// require('dotenv').config();
 
 const app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(cors());
 
 app.use('/movies', require('./routes/movies'));
 
 // catch 404 and forward to error handler
-app.use((_req, _res, next) => next(res.sendStatus(404)));
+app.use((_req, res, next) => next(res.sendStatus(404)));
 
 // error handler
 app.use((err, req, res) => {

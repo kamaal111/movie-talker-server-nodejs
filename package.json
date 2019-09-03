@@ -8,6 +8,7 @@
         "dev": "npx nodemon ."
     },
     "dependencies": {
+        "cors": "^2.8.5",
         "debug": "~2.6.9",
         "dotenv": "^8.1.0",
         "express": "^4.17.1",
