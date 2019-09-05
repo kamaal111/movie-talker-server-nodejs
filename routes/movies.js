@@ -1,10 +1,9 @@
 const { Router } = require('express');
 const { get: getRequest } = require('superagent');
 
-const router = new Router();
+const { apiKey, host } = require('../apiConsts');
 
-const apiKey = process.env.TMDB_API_KEY;
-const host = 'https://api.themoviedb.org/3';
+const router = new Router();
 
 router.get('/search/:search/:page', async (req, res) => {
   try {
@@ -27,7 +26,21 @@ router.get('/search/:search/:page', async (req, res) => {
       return res.status(404).send({ data: res.status });
     }
 
-    return res.status(200).send({ data: responseBody });
+    const results = responseBody.results
+      .map(({ original_title, release_date, overview }) => ({
+        original_title,
+        release_date,
+        overview,
+      }))
+      .filter(({ overview }) => overview !== '');
+
+    const data = {
+      results,
+      page: responseBody.page,
+      totalPages: responseBody.total_pages,
+    };
+
+    return res.status(200).send({ data });
   } catch (error) {
     return res.status(400).send({ data: res.status });
   }
