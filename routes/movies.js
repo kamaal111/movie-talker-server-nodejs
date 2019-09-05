@@ -6,20 +6,31 @@ const router = new Router();
 const apiKey = process.env.TMDB_API_KEY;
 const host = 'https://api.themoviedb.org/3';
 
-router.get('/search/:search', async (req, res) => {
-    try {
-        const { search } = req.params;
-        const apiAddress = `${host}/search/movie?include_adult=false&page=1&query=${search}&language=en-US&api_key=${apiKey}`;
-        const { body: responseBody } = await getRequest(apiAddress);
+router.get('/search/:search/:page', async (req, res) => {
+  try {
+    const apiOptions = {
+      apiKey,
+      adult: false,
+      search: req.params.search,
+      language: 'en-US',
+      page: req.params.params,
+    };
 
-        if (responseBody.results.length < 1) {
-            return res.status(404).send({ data: res.status });
-        }
+    const apiAddress =
+      `${host}/search/movie?include_adult=${apiOptions.adult}` +
+      `&page=${apiOptions.page}&query=${apiOptions.search}` +
+      `&language=en-US&api_key=${apiOptions.apiKey}`;
 
-        return res.status(200).send({ data: responseBody });
-    } catch (error) {
-        return res.status(400).send({ data: res.status });
+    const { body: responseBody } = await getRequest(apiAddress);
+
+    if (responseBody.results.length < 1) {
+      return res.status(404).send({ data: res.status });
     }
+
+    return res.status(200).send({ data: responseBody });
+  } catch (error) {
+    return res.status(400).send({ data: res.status });
+  }
 });
 
 module.exports = router;
