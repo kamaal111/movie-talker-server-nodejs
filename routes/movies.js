@@ -10,8 +10,8 @@ router.get('/search/:search/:page', async (req, res) => {
     const apiOptions = {
       apiKey,
       adult: false,
-      search: req.params.search,
       language: 'en-US',
+      search: req.params.search,
       page: req.params.params,
     };
 
@@ -26,19 +26,26 @@ router.get('/search/:search/:page', async (req, res) => {
       return res.status(404).send({ data: res.status });
     }
 
-    const results = responseBody.results
-      .map(({ original_title, release_date, overview }) => ({
-        original_title,
-        release_date,
-        overview,
-      }))
-      .filter(({ overview }) => overview !== '');
+    const page = responseBody.page;
+    const totalPages = responseBody.total_pages;
+    const data = responseBody.results.reduce(
+      (acc, result) => {
+        if (result.overview === '') return acc;
 
-    const data = {
-      results,
-      page: responseBody.page,
-      totalPages: responseBody.total_pages,
-    };
+        return {
+          ...acc,
+          results: [
+            ...acc.results,
+            {
+              original_title: result.original_title,
+              release_date: result.original_title,
+              overview: result.overview,
+            },
+          ],
+        };
+      },
+      { page, totalPages, results: [] }
+    );
 
     return res.status(200).send({ data });
   } catch (error) {
